@@ -2,11 +2,6 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
-import { FeedPageComponent } from './pages/feed/feed.page';
-import { LoginPageComponent } from './pages/login/login.page';
-import { NotFoundPageComponent } from './pages/not-found/not-found.page';
-import { PostDetailPageComponent } from './pages/post-detail/post-detail.page';
-import { RegisterPageComponent } from './pages/register/register.page';
 
 export const routes: Routes = [
 	{
@@ -16,27 +11,32 @@ export const routes: Routes = [
 	},
 	{
 		path: 'login',
-		component: LoginPageComponent,
+		// Lazy-load the standalone component to reduce initial bundle size
+		loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPageComponent),
 		canActivate: [guestGuard]
 	},
 	{
 		path: 'register',
-		component: RegisterPageComponent,
+		// Lazy-load register page
+		loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPageComponent),
 		canActivate: [guestGuard]
 	},
 	{
 		path: 'feed',
-		component: FeedPageComponent,
+		// Lazy-load feed page
+		loadComponent: () => import('./pages/feed/feed.page').then(m => m.FeedPageComponent),
 		canActivate: [authGuard]
 	},
 	{
 		path: 'posts/:id',
-		component: PostDetailPageComponent,
+		// Lazy-load post detail page
+		loadComponent: () => import('./pages/post-detail/post-detail.page').then(m => m.PostDetailPageComponent),
 		canActivate: [authGuard]
 	},
 	{
 		path: '404',
-		component: NotFoundPageComponent
+		// Lazy-load not found page
+		loadComponent: () => import('./pages/not-found/not-found.page').then(m => m.NotFoundPageComponent)
 	},
 	{
 		path: '**',
