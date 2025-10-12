@@ -1,0 +1,50 @@
+<section class="comments" aria-label="Comments">
+  @if (comments().length === 0) {
+    <p class="comments__empty">No comments yet. Join the conversation.</p>
+  } @else {
+    <ul class="comments__list">
+      @for (comment of comments(); track comment.createdAt + comment.userId) {
+        <li class="comments__item">
+          <div class="comments__meta">
+            <span class="comments__author">@{{ comment.username }}</span>
+            <time class="comments__timestamp" [attr.title]="formatTimestamp(comment.createdAt)">
+              {{ formatTimestamp(comment.createdAt) }}
+            </time>
+          </div>
+          <p class="comments__content">{{ comment.content }}</p>
+        </li>
+      }
+    </ul>
+  }
+
+  <form class="comments__form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <label class="comments__label" for="comment-content">Add a comment</label>
+    <textarea
+      id="comment-content"
+      formControlName="content"
+      rows="3"
+      [attr.maxlength]="500"
+      [disabled]="submitting() || !canComment()"
+      [attr.aria-invalid]="hasError()"
+      placeholder="Share your thoughts"
+    ></textarea>
+    @if (hasError()) {
+      <p class="comments__error" role="alert">Comment is required and must be 500 characters or fewer.</p>
+    }
+    @if (error()) {
+      <p class="comments__error" role="alert">{{ error() }}</p>
+    }
+    <div class="comments__actions">
+      @if (!canComment()) {
+        <p class="comments__hint">Sign in to leave a comment.</p>
+      }
+      <button type="submit" class="comments__submit" [disabled]="submitting() || !canComment()">
+        @if (submitting()) {
+          Posting...
+        } @else {
+          Post Comment
+        }
+      </button>
+    </div>
+  </form>
+</section>

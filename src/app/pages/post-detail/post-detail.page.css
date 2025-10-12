@@ -1,0 +1,45 @@
+.detail {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.detail__back {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.detail__back:hover,
+.detail__back:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+.detail__skeleton {
+  border-radius: 1rem;
+  padding-block: 3rem;
+  background: linear-gradient(90deg, #e2e8f0 25%, #eef2ff 37%, #e2e8f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.detail__error {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: rgba(254, 226, 226, 0.6);
+  color: #b91c1c;
+}
+
+.detail__title {
+  margin: 0;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

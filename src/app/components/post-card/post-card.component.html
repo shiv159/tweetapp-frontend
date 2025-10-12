@@ -1,0 +1,47 @@
+@if (post(); as currentPost) {
+  <article class="post-card">
+    <header class="post-card__header">
+      <div class="post-card__identity">
+        <span class="post-card__author" aria-label="Author">@{{ currentPost.userId }}</span>
+      </div>
+      <time class="post-card__timestamp" [attr.title]="createdAtExact()">
+        {{ createdAtRelative() }}
+      </time>
+    </header>
+
+    <p class="post-card__content">{{ currentPost.content }}</p>
+
+    <div class="post-card__actions" role="group" aria-label="Post actions">
+      <button
+        type="button"
+        class="post-card__action"
+        [class.post-card__action--active]="hasLiked()"
+        [disabled]="likePending()"
+        (click)="onToggleLike()"
+        aria-pressed="{{ hasLiked() }}"
+      >
+        <span aria-hidden="true">♥</span>
+        <span>{{ likeCount() }}</span>
+      </button>
+
+      <button type="button" class="post-card__action" (click)="onToggleComments()">
+        <span aria-hidden="true">💬</span>
+        <span>{{ comments().length }}</span>
+      </button>
+
+      @if (showDetailsLink()) {
+        <a class="post-card__link" [routerLink]="['/posts', currentPost.postId]">View details</a>
+      }
+    </div>
+
+    @if (areCommentsVisible()) {
+      <app-comments-section
+        [comments]="comments()"
+        [canComment]="enableComposer()"
+        [submitting]="commentPending()"
+        [error]="commentError()"
+        (submitComment)="onSubmitComment($event)"
+      ></app-comments-section>
+    }
+  </article>
+}

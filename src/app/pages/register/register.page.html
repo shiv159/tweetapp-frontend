@@ -1,0 +1,79 @@
+<section class="auth" aria-labelledby="register-heading">
+  <div class="auth__header">
+    <h1 id="register-heading">Create your account</h1>
+    <p class="auth__hint">
+      Already registered?
+      <a routerLink="/login">Sign in instead</a>
+    </p>
+  </div>
+
+  @if (formError()) {
+    <div class="auth__alert" role="alert">{{ formError() }}</div>
+  }
+
+  <form class="auth__form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <label for="username">Username</label>
+    <input
+      id="username"
+      formControlName="username"
+      type="text"
+      autocomplete="username"
+      [attr.aria-invalid]="usernameError() !== null"
+      [attr.aria-required]="true"
+    />
+    @if (usernameError()) {
+      <span class="auth__error" role="alert">{{ usernameError() }}</span>
+    }
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      formControlName="password"
+      type="password"
+      autocomplete="new-password"
+      [attr.aria-invalid]="passwordError() !== null"
+      [attr.aria-required]="true"
+    />
+    @if (passwordError()) {
+      <span class="auth__error" role="alert">{{ passwordError() }}</span>
+    }
+
+    <label for="email">Email</label>
+    <input id="email" formControlName="email" type="email" autocomplete="email" [attr.aria-invalid]="emailError() !== null" />
+    @if (emailError()) {
+      <span class="auth__error" role="alert">{{ emailError() }}</span>
+    }
+
+    <label for="firstName">First name</label>
+    <input id="firstName" formControlName="firstName" type="text" [attr.aria-invalid]="firstNameError() !== null" />
+    @if (firstNameError()) {
+      <span class="auth__error" role="alert">{{ firstNameError() }}</span>
+    }
+
+    <label for="lastName">Last name</label>
+    <input id="lastName" formControlName="lastName" type="text" [attr.aria-invalid]="lastNameError() !== null" />
+    @if (lastNameError()) {
+      <span class="auth__error" role="alert">{{ lastNameError() }}</span>
+    }
+
+    <label for="dateOfBirth">Date of birth</label>
+    <input
+      id="dateOfBirth"
+      formControlName="dateOfBirth"
+      type="date"
+      [attr.aria-invalid]="dobError() !== null"
+      [attr.pattern]="'\\d{4}-\\d{2}-\\d{2}'"
+    />
+    @if (dobError()) {
+      <span class="auth__error" role="alert">{{ dobError() }}</span>
+    }
+
+    <button type="submit" [disabled]="isSubmitting()">
+      @if (isSubmitting()) {
+        Creating account...
+      } @else {
+        Register
+      }
+    </button>
+  </form>
+</section>

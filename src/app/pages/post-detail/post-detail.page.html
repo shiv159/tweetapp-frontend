@@ -1,0 +1,26 @@
+<section class="detail" aria-labelledby="post-detail-heading">
+  <a class="detail__back" routerLink="/feed">← Back to feed</a>
+
+  @if (isLoading()) {
+    <div class="detail__skeleton"></div>
+  } @else {
+    @if (errorMessage()) {
+      <p class="detail__error" role="alert">{{ errorMessage() }}</p>
+    } @else {
+      @if (post(); as currentPost) {
+        <h1 id="post-detail-heading" class="detail__title">Post details</h1>
+        <app-post-card
+          [post]="currentPost"
+          [currentUserId]="currentUserId()"
+          [likePending]="likePending()"
+          [commentPending]="commentPending()"
+          [commentError]="commentError()"
+          [enableComposer]="canInteract()"
+          [showDetailsLink]="false"
+          (likeToggled)="onToggleLike($event)"
+          (commentSubmitted)="onCommentSubmit($event)"
+        ></app-post-card>
+      }
+    }
+  }
+</section>

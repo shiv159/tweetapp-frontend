@@ -1,0 +1,45 @@
+<section class="feed" aria-labelledby="feed-heading">
+  <header class="feed__header">
+    <h1 id="feed-heading">Home</h1>
+    <p class="feed__subtitle">Share updates with the community.</p>
+  </header>
+
+  <app-post-composer
+    (submitPost)="onComposerSubmit($event)"
+    [disabled]="composerPending()"
+  ></app-post-composer>
+
+  @if (isLoading()) {
+    <div class="feed__skeleton">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="feed__error" role="alert">
+        <p>{{ errorMessage() }}</p>
+        <button type="button" (click)="retry()">Try again</button>
+      </div>
+    } @else {
+      @if (posts().length === 0) {
+        <p class="feed__empty">No posts yet. Be the first to share something!</p>
+      } @else {
+        <div class="feed__list">
+          @for (post of posts(); track trackByPostId($index, post)) {
+            <app-post-card
+              [post]="post"
+              [currentUserId]="currentUserId()"
+              [likePending]="isLikePending(post.postId)"
+              [commentPending]="isCommentPending(post.postId)"
+              [commentError]="commentError(post.postId)"
+              [enableComposer]="canInteract()"
+              (likeToggled)="onToggleLike($event)"
+              (commentSubmitted)="onCommentSubmit($event)"
+            ></app-post-card>
+          }
+        </div>
+      }
+    }
+  }
+</section>

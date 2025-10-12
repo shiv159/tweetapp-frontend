@@ -1,0 +1,78 @@
+.post-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.post-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.post-card__author {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.post-card__timestamp {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.post-card__content {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.post-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.post-card__action,
+.post-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding-inline: 0.9rem;
+  padding-block: 0.4rem;
+  border: none;
+  background-color: #e2e8f0;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+}
+
+.post-card__action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.post-card__action:not(:disabled):hover,
+.post-card__action:not(:disabled):focus-visible,
+.post-card__link:hover,
+.post-card__link:focus-visible {
+  background-color: #cbd5f5;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
+  outline: none;
+}
+
+.post-card__action--active {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: #ffffff;
+}

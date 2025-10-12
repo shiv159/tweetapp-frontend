@@ -1,0 +1,49 @@
+<section class="auth" aria-labelledby="login-heading">
+  <div class="auth__header">
+    <h1 id="login-heading">Welcome back</h1>
+    <p class="auth__hint">
+      New to TweetApp?
+      <a routerLink="/register">Create an account</a>
+    </p>
+  </div>
+
+  @if (formError()) {
+    <div class="auth__alert" role="alert">{{ formError() }}</div>
+  }
+
+  <form class="auth__form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <label for="username">Username</label>
+    <input
+      id="username"
+      formControlName="username"
+      type="text"
+      autocomplete="username"
+      [attr.aria-invalid]="usernameError()"
+      [attr.aria-required]="true"
+    />
+    @if (usernameError()) {
+      <span class="auth__error" role="alert">Username is required.</span>
+    }
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      formControlName="password"
+      type="password"
+      autocomplete="current-password"
+      [attr.aria-invalid]="passwordError()"
+      [attr.aria-required]="true"
+    />
+    @if (passwordError()) {
+      <span class="auth__error" role="alert">Password is required.</span>
+    }
+
+    <button type="submit" [disabled]="isSubmitting()">
+      @if (isSubmitting()) {
+        Signing in...
+      } @else {
+        Sign in
+      }
+    </button>
+  </form>
+</section>

@@ -1,0 +1,81 @@
+.feed {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.feed__header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.feed__subtitle {
+  margin: 0;
+  color: #475569;
+}
+
+.feed__list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.feed__empty {
+  margin: 0;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background-color: #f8fafc;
+  color: #475569;
+  text-align: center;
+}
+
+.feed__error {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background-color: rgba(254, 226, 226, 0.6);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+}
+
+.feed__error p {
+  margin: 0;
+  color: #b91c1c;
+}
+
+.feed__error button {
+  justify-self: start;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.feed__error button:hover,
+.feed__error button:focus-visible {
+  outline: none;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.3);
+}
+
+.feed__skeleton {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton {
+  border-radius: 1rem;
+  padding-block: 2.5rem;
+  background: linear-gradient(90deg, #e2e8f0 25%, #eef2ff 37%, #e2e8f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

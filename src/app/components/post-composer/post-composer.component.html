@@ -1,0 +1,25 @@
+<form class="composer" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <label class="composer__label" for="post-content">Compose new post</label>
+  <textarea
+    id="post-content"
+    formControlName="content"
+    [attr.maxlength]="maxLength"
+    [attr.placeholder]="placeholder()"
+    rows="3"
+    [attr.aria-invalid]="hasError()"
+    [disabled]="disabled()"
+  ></textarea>
+  <div class="composer__footer">
+    <span class="composer__counter" [class.composer__counter--warning]="contentLength() > maxLength - 40">
+      {{ contentLength() }} / {{ maxLength }}
+    </span>
+    <button type="submit" class="composer__submit" [disabled]="disabled() || form.invalid">
+      Post
+    </button>
+  </div>
+  @if (hasError()) {
+    <p class="composer__error" role="alert">
+      Post content is required and must be 280 characters or fewer.
+    </p>
+  }
+</form>
