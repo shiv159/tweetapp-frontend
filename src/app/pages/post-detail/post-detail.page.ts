@@ -19,27 +19,33 @@ import { PostCardComponent } from '../../components/post-card/post-card.componen
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostDetailPageComponent {
+  // Services
   private readonly route = inject(ActivatedRoute);
   private readonly postService = inject(PostService);
   private readonly toastService = inject(ToastService);
   private readonly apiResponseService = inject(ApiResponseService);
   private readonly authService = inject(AuthService);
 
-  protected readonly post = signal<Post | null>(null);
-  protected readonly isLoading = signal(true);
-  protected readonly errorMessage = signal<string | null>(null);
+  // State signals
+  protected readonly post = signal<Post | null>(null);            // The post being displayed
+  protected readonly isLoading = signal(true);                    // Initial load state
+  protected readonly errorMessage = signal<string | null>(null);  // Error message
 
-  protected readonly likePending = signal(false);
-  protected readonly commentPending = signal(false);
-  protected readonly commentError = signal<string | null>(null);
+  // Interaction state signals
+  protected readonly likePending = signal(false);                 // Like request in progress
+  protected readonly commentPending = signal(false);              // Comment submission in progress
+  protected readonly commentError = signal<string | null>(null);  // Comment error message
 
+  // Convert Observable streams to Signals
   private readonly currentUserSignal = toSignal(this.authService.currentUser$, { initialValue: null });
   private readonly tokenSignal = toSignal(this.authService.token$, { initialValue: null });
 
+  // Computed state
   protected readonly currentUserId = computed(() => this.currentUserSignal()?.userId ?? null);
   protected readonly canInteract = computed(() => this.tokenSignal() !== null);
 
   constructor() {
+    // Watch route params for post ID changes
     this.route.paramMap
       .pipe(
         takeUntilDestroyed(),
@@ -54,10 +60,14 @@ export class PostDetailPageComponent {
       });
   }
 
+  /** Get current post ID */
+  /** Get current post ID */
   protected get postId(): string | null {
     return this.post()?.postId ?? null;
   }
 
+  /** Handle like/unlike toggle with optimistic update */
+  /** Handle like/unlike toggle with optimistic update */
   protected onToggleLike(postId: string): void {
     const user = this.authService.getCurrentUser();
     if (!user || this.likePending()) {
@@ -67,11 +77,13 @@ export class PostDetailPageComponent {
       return;
     }
 
+    // Save snapshot for rollback
     const snapshot = this.post();
     if (!snapshot) {
       return;
     }
 
+    // Optimistic update
     const hasLiked = snapshot.likes.some((like) => like.userId === user.userId);
     const likes = hasLiked
       ? snapshot.likes.filter((like) => like.userId !== user.userId)
@@ -80,18 +92,21 @@ export class PostDetailPageComponent {
     this.post.set({ ...snapshot, likes });
     this.likePending.set(true);
 
+    // Call API
     this.postService
       .toggleLike(postId)
       .pipe(finalize(() => this.likePending.set(false)))
       .subscribe({
         next: () => this.refresh(postId),
         error: () => {
-          this.post.set(snapshot);
+          this.post.set(snapshot);  // Rollback on error
           this.toastService.error('Unable to update like. Please try again.');
         }
       });
   }
 
+  /** Handle comment submission */
+  /** Handle comment submission */
   protected onCommentSubmit(payload: { postId: string; content: string }): void {
     const user = this.authService.getCurrentUser();
     if (!user || this.commentPending()) {
@@ -104,6 +119,7 @@ export class PostDetailPageComponent {
     this.commentPending.set(true);
     this.commentError.set(null);
 
+    // Call API to add comment
     this.postService
       .addComment(payload.postId, { content: payload.content })
       .pipe(finalize(() => this.commentPending.set(false)))
@@ -124,6 +140,8 @@ export class PostDetailPageComponent {
       });
   }
 
+  /** Load post data from API */
+  /** Load post data from API */
   private loadPost(postId: string): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
@@ -150,6 +168,7 @@ export class PostDetailPageComponent {
       });
   }
 
+  /** Refresh post data after like/comment */
   private refresh(postId: string): void {
     this.postService
       .getById(postId)

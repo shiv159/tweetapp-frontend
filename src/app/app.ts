@@ -13,11 +13,17 @@ import { AuthService } from './core/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {
+  // Services
   private readonly authService = inject(AuthService);
+  
+  // Convert Observable streams to Signals
   protected readonly currentUser = toSignal(this.authService.currentUser$, { initialValue: null });
   protected readonly token = toSignal(this.authService.token$, { initialValue: null });
+  
+  // Computed state - Check if user is authenticated
   protected readonly isAuthenticated = computed(() => this.token() !== null);
 
+  /** Handle user logout */
   protected logout(): void {
     this.authService.logout();
   }

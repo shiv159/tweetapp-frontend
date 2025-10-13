@@ -13,17 +13,20 @@ import { CommentsSectionComponent } from '../comments-section/comments-section.c
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostCardComponent {
-  readonly post = input<Post>();
-  readonly currentUserId = input<string | null>(null);
-  readonly likePending = input<boolean>(false);
-  readonly commentPending = input<boolean>(false);
-  readonly commentError = input<string | null>(null);
-  readonly showDetailsLink = input<boolean>(true);
-  readonly enableComposer = input<boolean>(true);
+  // Inputs - Data received from parent component
+  readonly post = input<Post>();                            // Post data to display
+  readonly currentUserId = input<string | null>(null);      // Logged-in user ID
+  readonly likePending = input<boolean>(false);             // Like request in progress
+  readonly commentPending = input<boolean>(false);          // Comment request in progress
+  readonly commentError = input<string | null>(null);       // Comment error message
+  readonly showDetailsLink = input<boolean>(true);          // Show "View details" link
+  readonly enableComposer = input<boolean>(true);           // Enable comment composer
 
-  readonly likeToggled = output<string>();
-  readonly commentSubmitted = output<{ postId: string; content: string }>();
+  // Outputs - Events emitted to parent component
+  readonly likeToggled = output<string>();                  // Emits post ID when like is clicked
+  readonly commentSubmitted = output<{ postId: string; content: string }>();  // Emits when comment is submitted
 
+  // Computed state - Derived from inputs
   protected readonly comments = computed<Comment[]>(() => this.post()?.comments ?? []);
   protected readonly likeCount = computed(() => this.post()?.likes.length ?? 0);
   protected readonly hasLiked = computed(() => {
@@ -40,10 +43,12 @@ export class PostCardComponent {
   protected readonly createdAtRelative = computed(() => formatRelativeTime(this.post()?.createdAt));
   protected readonly createdAtExact = computed(() => formatExactTime(this.post()?.createdAt));
 
-  protected readonly areCommentsVisible = signal(false);
+  // Local state signal
+  protected readonly areCommentsVisible = signal(false);    // Toggle comments section visibility
   private previousCommentTotal = 0;
 
   constructor() {
+    // Auto-open comments when a new comment is added
     effect(() => {
       const currentComments = this.comments().length;
       if (currentComments > this.previousCommentTotal) {
@@ -53,6 +58,8 @@ export class PostCardComponent {
     });
   }
 
+  /** Emit like toggle event */
+  /** Emit like toggle event */
   protected onToggleLike(): void {
     const post = this.post();
     if (!post || this.likePending()) {
@@ -62,10 +69,12 @@ export class PostCardComponent {
     this.likeToggled.emit(post.postId);
   }
 
+  /** Toggle comments section visibility */
   protected onToggleComments(): void {
     this.areCommentsVisible.update((current) => !current);
   }
 
+  /** Emit comment submission event */
   protected onSubmitComment(content: string): void {
     const post = this.post();
     if (!post) {
@@ -76,6 +85,8 @@ export class PostCardComponent {
   }
 }
 
+/** Format date as relative time (e.g., "2 hours ago") */
+/** Format date as relative time (e.g., "2 hours ago") */
 function formatRelativeTime(isoDate?: string): string {
   if (!isoDate) {
     return '';
@@ -105,6 +116,7 @@ function formatRelativeTime(isoDate?: string): string {
   return '';
 }
 
+/** Format date as exact timestamp (e.g., "Jan 15, 2025, 3:30 PM") */
 function formatExactTime(isoDate?: string): string {
   if (!isoDate) {
     return '';

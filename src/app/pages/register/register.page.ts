@@ -18,6 +18,7 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterPageComponent {
+  // Services
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
@@ -25,6 +26,7 @@ export class RegisterPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  // Registration form with validation rules
   protected readonly form = this.formBuilder.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -34,10 +36,12 @@ export class RegisterPageComponent {
     dateOfBirth: ['', [Validators.required, Validators.pattern(DATE_REGEX)]]
   });
 
-  protected readonly isSubmitting = signal(false);
-  private readonly submitted = signal(false);
-  protected readonly formError = signal<string | null>(null);
+  // State signals
+  protected readonly isSubmitting = signal(false);        // API request in progress
+  private readonly submitted = signal(false);             // Form was submitted at least once
+  protected readonly formError = signal<string | null>(null);  // General form error message
 
+  // Computed error messages for each field
   protected readonly usernameError = computed(() => this.errorFor('username'));
   protected readonly passwordError = computed(() => this.errorFor('password'));
   protected readonly emailError = computed(() => this.errorFor('email'));
@@ -45,10 +49,13 @@ export class RegisterPageComponent {
   protected readonly lastNameError = computed(() => this.errorFor('lastName'));
   protected readonly dobError = computed(() => this.errorFor('dateOfBirth'));
 
+  /** Handle registration form submission */
+  /** Handle registration form submission */
   protected onSubmit(): void {
     this.submitted.set(true);
     this.formError.set(null);
 
+    // Validate form before submitting
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -56,6 +63,7 @@ export class RegisterPageComponent {
 
     this.isSubmitting.set(true);
 
+    // Call registration API
     this.authService
       .register(this.form.getRawValue())
       .pipe(
@@ -79,6 +87,7 @@ export class RegisterPageComponent {
       });
   }
 
+  /** Get error message for a specific form field */
   private errorFor(controlName: 'username' | 'password' | 'email' | 'firstName' | 'lastName' | 'dateOfBirth'): string | null {
     const control = this.form.controls[controlName];
     if (!control.invalid || (!control.touched && !this.submitted())) {

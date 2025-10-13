@@ -93,10 +93,12 @@ import { ToastService } from '../../core/services/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToastComponent {
+  // Computed state - Gets toasts from service
   readonly toasts = computed(() => this.toastService.toasts());
 
   constructor(private readonly toastService: ToastService) {}
 
+  /** Dismiss a toast notification */
   dismiss(id: number): void {
     this.toastService.dismiss(id);
   }

@@ -10,22 +10,34 @@ import { input, output } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostComposerComponent {
-  readonly disabled = input<boolean>(false);
-  readonly placeholder = input<string>('What is happening?');
-  readonly submitPost = output<string>();
+  // Inputs - Configuration from parent
+  readonly disabled = input<boolean>(false);                // Disable form during submission
+  readonly placeholder = input<string>('What is happening?');  // Textarea placeholder text
+  
+  // Output - Event emitted on submission
+  readonly submitPost = output<string>();                   // Emits post content
 
+  // Services
   private readonly formBuilder = inject(FormBuilder);
+  
+  // Form with validation
   protected readonly form = this.formBuilder.nonNullable.group({
     content: ['', [Validators.required, Validators.maxLength(280)]]
   });
 
+  // Computed state
   protected readonly contentLength = computed(() => this.form.controls.content.value.length);
   protected readonly maxLength = 280;
-  private readonly submitted = signal(false);
+  
+  // State signal
+  private readonly submitted = signal(false);               // Form was submitted at least once
 
+  /** Handle form submission */
+  /** Handle form submission */
   protected onSubmit(): void {
     this.submitted.set(true);
 
+    // Validate before submitting
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -39,11 +51,13 @@ export class PostComposerComponent {
     this.submitPost.emit(content.trim());
   }
 
+  /** Reset form to initial state (called by parent after successful submission) */
   reset(): void {
     this.form.reset();
     this.submitted.set(false);
   }
 
+  /** Check if form should show error state */
   protected hasError(): boolean {
     const control = this.form.controls.content;
     return control.invalid && (control.touched || this.submitted());

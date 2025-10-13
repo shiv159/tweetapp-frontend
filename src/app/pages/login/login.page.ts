@@ -16,6 +16,7 @@ import { ToastService } from '../../core/services/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginPageComponent {
+  // Services
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
@@ -24,28 +25,35 @@ export class LoginPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
+  // Reactive form with validation rules
   protected readonly form = this.formBuilder.nonNullable.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]]
   });
 
-  protected readonly isSubmitting = signal(false);
-  private readonly submitted = signal(false);
-  protected readonly formError = signal<string | null>(null);
-  protected readonly returnUrl = signal<string | null>(null);
+  // State signals
+  protected readonly isSubmitting = signal(false);        // API request in progress
+  private readonly submitted = signal(false);             // Form was submitted at least once
+  protected readonly formError = signal<string | null>(null);  // General form error message
+  protected readonly returnUrl = signal<string | null>(null);  // Redirect URL after login
 
   constructor() {
+    // Capture return URL from query params (e.g., /login?returnUrl=/feed)
     const initialReturnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     this.returnUrl.set(initialReturnUrl);
   }
 
+  // Computed error states for individual fields
   protected readonly usernameError = computed(() => this.shouldShowError('username'));
   protected readonly passwordError = computed(() => this.shouldShowError('password'));
 
+  /** Handle login form submission */
+  /** Handle login form submission */
   protected onSubmit(): void {
     this.submitted.set(true);
     this.formError.set(null);
 
+    // Validate form before submitting
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -54,6 +62,7 @@ export class LoginPageComponent {
     this.isSubmitting.set(true);
     const payload = this.form.getRawValue();
 
+    // Call authentication API
     this.authService
       .login(payload)
       .pipe(
@@ -78,6 +87,7 @@ export class LoginPageComponent {
       });
   }
 
+  /** Check if a field should display its error message */
   private shouldShowError(controlName: 'username' | 'password'): boolean {
     const control = this.form.controls[controlName];
     return control.invalid && (control.touched || this.submitted());
