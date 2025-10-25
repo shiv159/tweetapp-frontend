@@ -1,0 +1,40 @@
+<section class="search">
+  <h1 class="search__title">Search users</h1>
+
+  <label class="search__label" for="q">Username</label>
+  <input
+    id="q"
+    class="search__input"
+    type="text"
+    [formControl]="searchControl"
+    placeholder="Type at least 2 characters..."
+    aria-label="Search by username"
+  />
+
+  @if (!isLoading() && !errorMessage() && (results().length === 0) && hasQuery()) {
+    <p class="search__hint">No results found.</p>
+  }
+
+  @if (!hasQuery()) {
+    <p class="search__hint">Start typing to search for users.</p>
+  }
+
+  @if (isLoading()) {
+    <p class="search__loading">Loading…</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="search__error">{{ errorMessage() }}</p>
+  }
+
+  @if (results().length > 0) {
+    <ul class="results">
+      @for (user of results(); track user.userId) {
+        <li class="results__item">
+          <span class="results__username">{{ user.username }}</span>
+          <span class="results__id">{{ user.userId }}</span>
+        </li>
+      }
+    </ul>
+  }
+</section>

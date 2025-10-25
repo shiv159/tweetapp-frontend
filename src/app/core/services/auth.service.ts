@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../models/api-response';
 import { LoginRequest, RegisterRequest } from '../../models/auth';
 import { User } from '../../models/user';
 import { TokenStorageService } from './token-storage.service';
+import { MockAuthService } from '../mocks/mock-auth.service';
 
 interface JwtClaims {
   userId?: string;
@@ -28,20 +29,37 @@ export class AuthService {
     private readonly router: Router,
     private readonly tokenStorage: TokenStorageService
   ) {
+    // Inject mock service lazily
+    this.mockAuth = inject(MockAuthService);
     this.hydrateFromStorage();
   }
 
+  private readonly mockAuth?: MockAuthService;
+
   register(request: RegisterRequest): Observable<ApiResponse<string>> {
+    if (environment.useMockApi && this.mockAuth) {
+      return this.mockAuth.register(request) as Observable<ApiResponse<string>>;
+    }
     return this.http.post<ApiResponse<string>>(`${environment.apiBaseUrl}/api/auth/register`, request);
   }
 
   login(request: LoginRequest): Observable<ApiResponse<string>> {
+    if (environment.useMockApi && this.mockAuth) {
+            this.currentUserSubject.next({ userId: request.username, username: request.username });
+            console.log("logged with {}",request.username);
+      return of({ data: 'mock.token.payload', error: null, message: 'Logged in' });
+    }
+
     return this.http
       .post<ApiResponse<string>>(`${environment.apiBaseUrl}/api/auth/login`, request)
       .pipe(tap((response) => this.handleLoginResponse(response)));
   }
 
   logout(): void {
+    if (environment.useMockApi && this.mockAuth) {
+      this.mockAuth.logout();
+    }
+
     this.tokenStorage.clearToken();
     this.tokenSubject.next(null);
     this.currentUserSubject.next(null);
@@ -58,6 +76,7 @@ export class AuthService {
 
   private handleLoginResponse(response: ApiResponse<string>): void {
     if (!response.data) {
+      console.warn('Login response contained no token.');
       return;
     }
 

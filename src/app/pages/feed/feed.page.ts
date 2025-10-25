@@ -298,10 +298,10 @@ export class FeedPageComponent {
   protected onCommentSubmit(payload: { postId: string; content: string }): void {
     // Guard: Check if user is logged in
     const user = this.currentUserSignal();
-    if (!user) {
-      this.toastService.info('Sign in to comment.');
-      return;
-    }
+    // if (!user) {
+    //   this.toastService.info('Sign in to comment.');
+    //   return;
+    // }
 
     // Set loading state for THIS post only
     this.commentPending.update((current) => ({ ...current, [payload.postId]: true }));

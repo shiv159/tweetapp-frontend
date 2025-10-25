@@ -1,0 +1,35 @@
+<header class="profile__header">
+  <h1>My Profile</h1>
+  <button type="button" (click)="getMyPosts()">Show my posts</button>
+  <p class="profile__meta">User: {{ currentUserId() || 'Guest' }}</p>
+  
+</header>
+
+@if (isLoading()) {
+  <p>Loading...</p>
+} @else {
+  @if (errorMessage()) {
+    <div role="alert">{{ errorMessage() }}</div>
+  } @else {
+    @if (posts().length === 0) {
+      <p>No posts yet.</p>
+    } @else {
+      <div class="profile__posts">
+        @for (post of posts(); track trackByPostId($index, post)) {
+          <app-post-card
+            [post]="post"
+            [currentUserId]="currentUserId()"
+            [likePending]="isLikePending(post.postId)"
+            [commentPending]="isCommentPending(post.postId)"
+            [commentError]="commentError(post.postId)"
+            [enableComposer]="canInteract()"
+            [showDetailsLink]="true"
+            (likeToggled)="onToggleLike($event)"
+            (commentSubmitted)="onCommentSubmit($event)"
+          ></app-post-card>
+        }
+      </div>
+    }
+  }
+}
+
