@@ -4,8 +4,8 @@
       <div class="post-card__identity">
         <span class="post-card__author" aria-label="Author">@{{ currentPost.userId }}</span>
       </div>
-      <time class="post-card__timestamp" [attr.title]="createdAtExact()">
-        {{ createdAtRelative() }}
+      <time class="post-card__timestamp" [attr.title]="currentPost.createdAt ? (currentPost.createdAt | exactDatePipe) : null">
+        {{ currentPost.createdAt ? (currentPost.createdAt | timeAgoPipe) : '' }}
       </time>
     </header>
 

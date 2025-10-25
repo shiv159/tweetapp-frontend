@@ -2,10 +2,12 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, output, sign
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Comment } from '../../models/comment';
+import { ExactDatePipePipe } from '../../core/pipes/exact-date-pipe-pipe';
+import { TimeAgoPipePipe } from '../../core/pipes/time-ago-pipe-pipe';
 
 @Component({
   selector: 'app-comments-section',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,ExactDatePipePipe,TimeAgoPipePipe],
   templateUrl: './comments-section.component.html',
   styleUrl: './comments-section.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -70,10 +72,5 @@ export class CommentsSectionComponent {
   }
 
   /** Format comment timestamp for display */
-  protected formatTimestamp(value: string): string {
-    return new Intl.DateTimeFormat('en', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    }).format(new Date(value));
-  }
+  
 }

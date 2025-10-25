@@ -4,10 +4,12 @@ import { RouterLink } from '@angular/router';
 import { Comment } from '../../models/comment';
 import { Post } from '../../models/post';
 import { CommentsSectionComponent } from '../comments-section/comments-section.component';
+import { TimeAgoPipePipe } from '../../core/pipes/time-ago-pipe-pipe';
+import { ExactDatePipePipe } from '../../core/pipes/exact-date-pipe-pipe';
 
 @Component({
   selector: 'app-post-card',
-  imports: [RouterLink, CommentsSectionComponent],
+  imports: [RouterLink, CommentsSectionComponent, TimeAgoPipePipe, ExactDatePipePipe],
   templateUrl: './post-card.component.html',
   styleUrl: './post-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -40,8 +42,8 @@ export class PostCardComponent {
     return post.likes.some((like) => like.userId === userId);
   });
 
-  protected readonly createdAtRelative = computed(() => formatRelativeTime(this.post()?.createdAt));
-  protected readonly createdAtExact = computed(() => formatExactTime(this.post()?.createdAt));
+ // protected readonly createdAtRelative = computed(() => formatRelativeTime(this.post()?.createdAt));
+  //protected readonly createdAtExact = computed(() => formatExactTime(this.post()?.createdAt));
 
   // Local state signal
   protected readonly areCommentsVisible = signal(false);    // Toggle comments section visibility

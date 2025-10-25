@@ -7,8 +7,8 @@
         <li class="comments__item">
           <div class="comments__meta">
             <span class="comments__author">@{{ comment.username }}</span>
-            <time class="comments__timestamp" [attr.title]="formatTimestamp(comment.createdAt)">
-              {{ formatTimestamp(comment.createdAt) }}
+            <time class="comments__timestamp" [attr.title]="comment.createdAt | exactDatePipe">
+              {{ comment.createdAt | timeAgoPipe }}
             </time>
           </div>
           <p class="comments__content">{{ comment.content }}</p>
